@@ -163,6 +163,7 @@
         <Float attribute="Float" context="#stay">
           <!-- Number comments. -->
           <DetectIdentifier  attribute="Float" context="#stay"/>
+          <!-- TODO: disallow numbers without a leading 0.           -->
         </Float>
         <!-- Keywords. -->
         <keyword attribute="Keyword" context="#stay" String="keywords"/>
