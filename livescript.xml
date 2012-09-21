@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
 
-<language name="CoffeeScript"
-          version="1.1"
-          kateversion="2.4"
+<language name="LiveScript"
+          version="1.0"
+          kateversion="3.7"
           section="Scripts"
-          extensions="Cakefile;*.coffee;*.coco"
-          mimetype="text/x-coffeescript;application/x-coffeescript"
+          extensions="*.ls"
+          mimetype="text/x-livescript;application/x-livescript"
           indenter="python"
           casesensitive="1"
-          author="Max Shawabkeh (max99x@gmail.com)"
+          author="Rafal Rzepecki (divided.mind@gmail.com)"
           license="MIT">
   <highlighting>
     <!-- Built-in constants. -->
@@ -165,8 +165,6 @@
         <StringDetect attribute="String" context="Rich Heredoc" String="&quot;&quot;&quot;" beginRegion="Rich Heredoc"/>
         <DetectChar attribute="String" context="String" char="'"/>
         <DetectChar attribute="String" context="Rich String" char="&quot;"/>
-        <!-- Embedded JavaScript. -->
-        <DetectChar attribute="Javascript" context="Javascript" char="`" beginRegion="Javascript"/>
         <!-- Comments. -->
         <RegExpr attribute="Comment" context="Multiline Comment" String="###(?!#)" beginRegion="Comment"/>
         <DetectChar attribute="Comment" context="Comment" char="#"/>
@@ -218,12 +216,6 @@
         <Detect2Chars attribute="Symbol" context="Normal" char="#" char1="{"/>
         <StringDetect attribute="String" context="#pop" String="&quot;&quot;&quot;" endRegion="Rich Heredoc"/>
       </context>
-      <!-- Embedded Javascript. -->
-      <context name="Javascript" attribute="Javascript" lineEndContext="#stay" noIndentationBasedFolding="1">
-        <DetectChar attribute="Javascript" context="#pop" char="`" endRegion="Javascript"/>
-        <!-- NOTE: This hides errors where a backtick is embedded in a JS string. -->
-        <IncludeRules context="##JavaScript" includeAttrib="true"/>
-      </context>
     </contexts>
     <!-- Style mappings. -->
     <itemDatas>
@@ -240,7 +232,6 @@
       <itemData name="Symbol" defStyleNum="dsKeyword" spellChecking="false"/>
       <itemData name="Accessor" defStyleNum="dsDataType" spellChecking="false"/>
       <itemData name="Class" defStyleNum="dsDataType" spellChecking="false" bold="1"/>
-      <itemData name="Javascript" defStyleNum="dsAlert" spellChecking="false" italic="1"/>
       <itemData name="Regex" defStyleNum="dsString" spellChecking="false"/>
       <itemData name="Reserved" defStyleNum="dsAlert" spellChecking="false"/>
       <itemData name="Value Keywords" defStyleNum="dsOthers" spellChecking="false"/>
@@ -256,7 +247,7 @@
     <folding indentationsensitive="1"/>
     <comments>
       <comment name="singleLine" start="#"/>
-      <comment name="multiLine" start="###" end="###" region="Comment"/>
+      <comment name="multiLine" start="/*" end="*/" region="Comment"/>
     </comments>
     <keywords casesensitive="1" additionalDeliminator="#'"/>
     <emptyLines>
