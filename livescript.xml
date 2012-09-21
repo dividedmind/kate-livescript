@@ -241,6 +241,7 @@
       <!-- Expressions embedded in strings. -->
       <context name="Embedding" attribute="Normal" lineEndContext="#stay">
         <DetectChar attribute="Embedding" context="#pop" char="}"/>
+        <IncludeRules context="Normal"/>
       </context>
     </contexts>
     <!-- Style mappings. -->
