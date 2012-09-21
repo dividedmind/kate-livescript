@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE language SYSTEM "language.dtd">
+<!DOCTYPE language SYSTEM "language.dtd"
+[
+  <!ENTITY ident "[-_$a-zA-Z][$\w]*\b">
+  <!ENTITY arglist "(\((\'[^']*'|&quot;[^&quot;]*&quot;|[^()])*\))">
+]>
 
 <language name="LiveScript"
           version="1.0"
@@ -16,6 +20,7 @@
     <list name="value_keywords">
       <item>false</item>
       <item>true</item>
+      <item>void</item>
       <item>yes</item>
       <item>no</item>
       <item>on</item>
@@ -27,12 +32,22 @@
     </list>
     <!-- Generic keywords. -->
     <list name="keywords">
+      <item>arguments</item>
+      <item>const</item>
       <item>do</item>
+      <item>eval</item>
+      <item>fallthrough</item>
+      <item>for ever</item>
+      <item>let</item>
+      <item>otherwise</item>
       <item>return</item>
       <item>break</item>
       <item>continue</item>
       <item>throw</item>
       <item>for</item>
+      <item>to</item>
+      <item>var</item>
+      <item>with</item>
       <item>while</item>
       <item>until</item>
       <item>loop</item>
@@ -60,13 +75,14 @@
       <item>try</item>
       <item>catch</item>
       <item>finally</item>
-      <item>constructor</item>
+      <item>xor</item>
     </list>
     <!-- Keywords which are always followed by a class name. -->
     <list name="class_keywords">
       <item>class</item>
       <item>extends</item>
       <item>new</item>
+      <item>implements</item>
       <item>instanceof</item>
     </list>
     <!-- Reserved words. -->
@@ -74,11 +90,6 @@
       <item>case</item>
       <item>default</item>
       <item>function</item>
-      <item>var</item>
-      <item>void</item>
-      <item>with</item>
-      <item>const</item>
-      <item>let</item>
       <item>enum</item>
       <item>export</item>
       <item>import</item>
@@ -100,7 +111,6 @@
       <item>Function</item>
       <item>Date</item>
       <item>Math</item>
-      <item>eval</item>
       <item>setInterval</item>
       <item>clearInterval</item>
       <item>setTimeout</item>
@@ -142,9 +152,16 @@
         <DetectSpaces/>
         <!-- Numbers. -->
         <HlCHex attribute="Hex" context="#stay"/>
-        <HlCOct attribute="Oct" context="#stay"/>
-        <Int attribute="Decimal" context="#stay"/>
-        <Float attribute="Float" context="#stay"/>
+        <Int attribute="Decimal" context="#stay">
+          <!-- Number comments. -->
+          <DetectIdentifier  attribute="Decimal" context="#stay"/>
+          <!-- Other bases. -->
+          <DetectChar char="~" attribute="BaseN" context="#stay"/>
+        </Int>
+        <Float attribute="Float" context="#stay">
+          <!-- Number comments. -->
+          <DetectIdentifier  attribute="Float" context="#stay"/>
+        </Float>
         <!-- Keywords. -->
         <keyword attribute="Keyword" context="#stay" String="keywords"/>
         <keyword attribute="Keyword" context="Class" String="class_keywords"/>
@@ -155,21 +172,27 @@
         <keyword attribute="Browser Globals" context="#stay" String="browser_globals"/>
         <keyword attribute="Node.js Globals" context="#stay" String="nodejs_globals"/>
         <!-- Member accessors. -->
-        <RegExpr attribute="Accessor" context="#stay" String="(@[_$a-zA-Z][$\w]*|\bthis)\b" insensitive="false"/>
-        <!-- Function definitions. Matches an optional argument list followed by a function arrow (normal or fat). -->
-        <RegExpr attribute="Function" context="#stay" String="(\((\'[^']*'|&quot;[^&quot;]*&quot;|[^()])*\))?\s*(-|=)&gt;" insensitive="true"/>
+        <RegExpr attribute="Accessor" context="#stay" String="(@&ident;|\bthis\b)" insensitive="false"/>
+        <!-- Function definitions. Matches an optional argument list followed by a function arrow (normal or wavy, long and short, maybe suppressed). -->
+        <RegExpr attribute="Function" context="#stay" String="!?\s*&arglist;?\s*\s*(-{1,2}|~{1,2}})&gt;" insensitive="true"/>
+        <!-- Short function definition syntax. -->
+        <RegExpr attribute="Function" context="#stay" String="[~!]*&ident;(&arglist;|!)\s*=" insensitive="true"/>
+        <!-- Infix function call.  FIXME: dashed identifiers don't work.-->
+        <RegExpr attribute="Function" context="#stay" String="`&ident;`" insensitive="true"/>
+        <!-- TODO: partial application of operators, accessor functions shorthand. -->
+        
         <!-- Generic identifiers. -->
-        <RegExpr attribute="Identifier" context="#stay" String="[_$a-z][$\w]*\b" insensitive="true"/>
+        <RegExpr attribute="Identifier" context="#stay" String="&ident;" insensitive="true"/>
         <!-- Strings. -->
         <StringDetect attribute="String" context="Heredoc" String="'''" beginRegion="Heredoc"/>
         <StringDetect attribute="String" context="Rich Heredoc" String="&quot;&quot;&quot;" beginRegion="Rich Heredoc"/>
         <DetectChar attribute="String" context="String" char="'"/>
         <DetectChar attribute="String" context="Rich String" char="&quot;"/>
         <!-- Comments. -->
-        <StringDetect attribute="Comment" context="Multiline Comment" String="###" beginRegion="Comment"/>
+        <StringDetect attribute="Comment" context="Multiline Comment" String="/*" beginRegion="Comment"/>
         <DetectChar attribute="Comment" context="Comment" char="#"/>
         <!-- Regular expressions. -->
-        <RegExpr attribute="Regex" context="Multiline Regex" String="///" beginRegion="Multiline Regex"/>
+        <RegExpr attribute="Regex" context="Multiline Regex" String="//" beginRegion="Multiline Regex"/>
         <RegExpr attribute="Regex" context="#stay" String="/([^/\\\r\n]|\\.)*/[mig]{0,3}"/>
         <!-- Operators and other non-alphanumeric symbols. -->
         <AnyChar attribute="Symbol" context="#stay" String="():!%&amp;+,-/.*&lt;=&gt;?[]|~^&#59;{}"/>
@@ -178,7 +201,7 @@
       <context name="Multiline Regex" attribute="Regex" lineEndContext="#stay" noIndentationBasedFolding="1">
         <HlCStringChar attribute="Regex" context="#stay"/>
         <DetectChar attribute="Comment" context="Comment" char="#"/>
-        <RegExpr attribute="Regex" context="#pop" String="///[mig]{0,3}" endRegion="Multiline Regex"/>
+        <RegExpr attribute="Regex" context="#pop" String="//[mig]{0,3}" endRegion="Multiline Regex"/>
       </context>
       <!-- Class names. -->
       <context name="Class" attribute="Normal" lineEndContext="#stay">
@@ -190,7 +213,7 @@
         <IncludeRules context="##Alerts_indent"/>
       </context>
       <context name="Multiline Comment" attribute="Comment" lineEndContext="#stay" noIndentationBasedFolding="1">
-        <StringDetect attribute="Comment" context="#pop" String="###" endRegion="Comment"/>
+        <StringDetect attribute="Comment" context="#pop" String="*/" endRegion="Comment"/>
         <IncludeRules context="##Alerts_indent"/>
       </context>
       <!-- Single-line strings. -->
@@ -226,7 +249,7 @@
       <itemData name="Function" defStyleNum="dsFunction" spellChecking="false"/>
       <itemData name="Decimal" defStyleNum="dsDecVal" spellChecking="false"/>
       <itemData name="Float" defStyleNum="dsFloat" spellChecking="false"/>
-      <itemData name="Oct" defStyleNum="dsBaseN" spellChecking="false"/>
+      <itemData name="BaseN" defStyleNum="dsBaseN" spellChecking="false"/>
       <itemData name="Hex" defStyleNum="dsBaseN" spellChecking="false"/>
       <itemData name="String" defStyleNum="dsString" spellChecking="false"/>
       <itemData name="Comment" defStyleNum="dsComment" spellChecking="true"/>
