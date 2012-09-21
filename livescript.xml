@@ -33,11 +33,16 @@
     <!-- Generic keywords. -->
     <list name="keywords">
       <item>arguments</item>
+      <item>case</item>
       <item>const</item>
+      <item>default</item>
       <item>do</item>
       <item>eval</item>
+      <item>export</item>
       <item>fallthrough</item>
       <item>for ever</item>
+      <item>import</item>
+      <item>importAll</item>
       <item>let</item>
       <item>otherwise</item>
       <item>return</item>
@@ -87,12 +92,8 @@
     </list>
     <!-- Reserved words. -->
     <list name="reserved">
-      <item>case</item>
-      <item>default</item>
       <item>function</item>
       <item>enum</item>
-      <item>export</item>
-      <item>import</item>
       <item>native</item>
       <item>__hasProp</item>
       <item>__extends</item>
