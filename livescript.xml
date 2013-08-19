@@ -6,7 +6,7 @@
 ]>
 
 <language name="LiveScript"
-          version="1.0"
+          version="1.1"
           kateversion="3.7"
           section="Scripts"
           extensions="*.ls"
@@ -189,6 +189,7 @@
         <!-- Strings. -->
         <StringDetect attribute="String" context="Heredoc" String="'''" beginRegion="Heredoc"/>
         <StringDetect attribute="String" context="Rich Heredoc" String="&quot;&quot;&quot;" beginRegion="Rich Heredoc"/>
+        <DetectChar attribute="String" context="Symbol" char="\"/>
         <DetectChar attribute="String" context="String" char="'"/>
         <DetectChar attribute="String" context="Rich String" char="&quot;"/>
         <!-- Comments. -->
@@ -218,6 +219,10 @@
       <context name="Multiline Comment" attribute="Comment" lineEndContext="#stay" noIndentationBasedFolding="1">
         <StringDetect attribute="Comment" context="#pop" String="*/" endRegion="Comment"/>
         <IncludeRules context="##Alerts_indent"/>
+      </context>
+      <!-- Single-word strings. -->
+      <context name="Symbol" attribute="String" lineEndContext="#pop">
+        <AnyChar attribute="String" lookAhead="true" context="#pop" String=" )"/>
       </context>
       <!-- Single-line strings. -->
       <context name="String" attribute="String" lineEndContext="#stay">
@@ -278,7 +283,7 @@
       <comment name="singleLine" start="#"/>
       <comment name="multiLine" start="/*" end="*/" region="Comment"/>
     </comments>
-    <keywords casesensitive="1" additionalDeliminator="#'"/>
+    <keywords casesensitive="1" additionalDeliminator="#'" weakDeliminator="-" />
     <emptyLines>
       <emptyLine regexpr="(?:\s+|\s*#.*)"/>
     </emptyLines>
